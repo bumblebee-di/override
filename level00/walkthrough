@@ -44,3 +44,21 @@ The piece of code of interest is:
 Convert hexadecimal to decimal
 ---> p /d 0x149c
 $1 = 5276
+
+Password is found, with next steps we'll get flag
+
+$ ./level00 
+***********************************
+*            -Level00 -           *
+***********************************
+Password:5276
+
+Authenticated!
+$ whoami
+level01
+$ cat /home/users/level01/.pass
+uSq2ehEGT6c9S24zbshexZQBXUGrncxn5sD5QfGL
+$ su level01
+Password: 
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
+Partial RELRO   No canary found   NX disabled   No PIE          No RPATH   No RUNPATH   /home/users/level01/level01
