@@ -1,0 +1,52 @@
+From decrypt function we can find sequence
+
+---> disas decrypt
+    ...
+   0x08048673 <+19>:    movl   $0x757c7d51,-0x1d(%ebp)
+   0x0804867a <+26>:    movl   $0x67667360,-0x19(%ebp)
+   0x08048681 <+33>:    movl   $0x7b66737e,-0x15(%ebp)
+   0x08048688 <+40>:    movl   $0x33617c7d,-0x11(%ebp)
+   ...
+
+$ python 
+    Python 2.7.3 (default, Jun 22 2015, 19:33:41) 
+    [GCC 4.6.3] on linux2
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> li = ["757c7d51", "67667360", "7b66737e", "33617c7d" ]
+    >>> li = [i.decode("hex")[::-1] for i in li]
+    >>> print ''.join(li)
+    Q}|u`sfg~sf{}|a3
+
+Let's try to pass numbers from 322424845 - 21 to 322424845 to ./level03 as password
+
+$ for i in {322424824..322424845}; do echo -n $i > /tmp/file$i  ; done
+$ for i in {322424824..322424845}; do cat /tmp/file$i | ./level03 ; echo $i ; done
+    ...
+    ***********************************
+    *               level03         **
+    ***********************************
+    Password:
+    Invalid Password
+    322424826
+    ***********************************
+    *               level03         **
+    ***********************************
+    Password:322424827
+    ***********************************
+    *               level03         **
+    ***********************************
+    Password:
+    Invalid Password
+    322424828
+    ...
+
+322424827 is password
+
+$ whoami
+level04
+$ cat /home/users/level04/.pass
+kgv3tkEb9h2mLkRsPkXRfc2mHbjMxQzvb2FrgKkf
+$ su level04
+Password: 
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
+Partial RELRO   No canary found   NX disabled   No PIE          No RPATH   No RUNPATH   /home/users/level04/level04
