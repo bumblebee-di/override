@@ -82,3 +82,20 @@ $ su level08
 Password: 
 RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
 Full RELRO      Canary found      NX disabled   No PIE          No RPATH   No RUNPATH   /home/users/level08/level08
+
+
+Breakpoint 3, 0x080489ea in main ()
+(gdb) i f
+Stack level 0, frame at 0xffffd720:
+ eip = 0x80489ea in main; saved eip 0xf7e45513
+ Arglist at 0xffffd718, args: 
+ Locals at 0xffffd718, Previous frame's sp is 0xffffd720
+ Saved registers:
+  ebx at 0xffffd70c, ebp at 0xffffd718, esi at 0xffffd710, edi at 0xffffd714, eip at 0xffffd71c
+
+  Stack level 0, frame at 0xffffd720:
+ eip = 0x80489f1 in main; saved eip 0xf7e45513
+ Arglist at unknown address.
+ Locals at unknown address, Previous frame's sp is 0xffffd720
+ Saved registers:
+  eip at 0xffffd71c
