@@ -18,15 +18,17 @@ We can not use gdb because of ptrace command in source
 To skip it we need to staisfy the condition at 0x080487ba <+114>:   cmp    $0xffffffff,%eax
 
 ---> b * 0x080487ba
----> set $eax = 0xffffffff
+---> r
+---> set $eax = 0x0
 
 then to find serial
 ---> b * 0x08048866
----> x/10x ($ebp - 16)
+---> c
+---> x/10bx ($ebp - 16)
     0xffffd6a8:     0x88    0x21    0x5f    0x00    0x08    0x00    0x00    0x00
     0xffffd6b0:     0x00    0x00
 
-So the serial for asdtfghjk is 5f2188 = 6234504
+So the serial for asdtfghjk is 0x5f2188 = 6234504
 
 $ ./level06 
 ***********************************
