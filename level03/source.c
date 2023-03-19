@@ -1,6 +1,9 @@
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
+// gcc -std=c99 -m32 -static -mabi=sysv -o a.out source.c
 
 void decrypt(int pass) {
     char str[17] = "Q}|u`sfg~sf{}|a3";
@@ -21,18 +24,18 @@ void test(int arg1, int arg2) {
 
     if (21 > var )
         decrypt(var);
-    // rand(arg2);
-    // decrypt(rand());
+    else
+        decrypt(rand());
     return;
 }
 
 int main(void) {
 
-    // time_t seconds;
+    time_t seconds;
 
-    // seconds = time(NULL);
+    seconds = time(NULL);
 
-    // srand(0);
+    srand(0);
     puts("***********************************");
     puts("*\t\tlevel03\t\t**");
     puts("***********************************");
