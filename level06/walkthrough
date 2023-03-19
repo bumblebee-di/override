@@ -1,0 +1,51 @@
+
+We can not use gdb because of ptrace command in source
+---> r
+    Starting program: /home/users/level06/level06 
+    ***********************************
+    *               level06           *
+    ***********************************
+    -> Enter Login: asdtfghjk
+    ***********************************
+    ***** NEW ACCOUNT DETECTED ********
+    ***********************************
+    -> Enter Serial: 1345678
+    .---------------------------.
+    | !! TAMPERING DETECTED !!  |
+    '---------------------------'
+    [Inferior 1 (process 1750) exited with code 01]
+
+To skip it we need to staisfy the condition at 0x080487ba <+114>:   cmp    $0xffffffff,%eax
+
+---> b * 0x080487ba
+---> r
+---> set $eax = 0x0
+
+then to find serial
+---> b * 0x08048866
+---> c
+---> x/10bx ($ebp - 16)
+    0xffffd6a8:     0x88    0x21    0x5f    0x00    0x08    0x00    0x00    0x00
+    0xffffd6b0:     0x00    0x00
+
+So the serial for asdtfghjk is 0x5f2188 = 6234504
+
+$ ./level06 
+***********************************
+*               level06           *
+***********************************
+-> Enter Login: adsfdgfh
+***********************************
+***** NEW ACCOUNT DETECTED ********
+***********************************
+-> Enter Serial: 6234504
+Authenticated!
+$ whoami 
+level07
+$ cat /home/users/level07/.pass
+GbcPDRgsFK77LNnnuh7QyFYA2942Gp8yKj9KrWD8
+
+$ su level07
+Password: 
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
+Partial RELRO   Canary found      NX disabled   No PIE          No RPATH   No RUNPATH   /home/users/level07/level07
