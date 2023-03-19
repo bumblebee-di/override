@@ -9,9 +9,8 @@ int main() {
 
     bzero(buffer, 32);
 
-    int status;
-    int ret;
-
+    int status = 0;
+    int ret = 0;
 
     if (pid == 0) {
         prctl(1, 1);
@@ -24,8 +23,6 @@ int main() {
     }
     do {
         wait(&status);
-        // WSTATUS(status);
-        // WIFEXITED(status);
         if ((status & 127) == 0 || (((status & 127) + 1) / 2) > 0) {
             puts("child is exiting...");
             return 0;
