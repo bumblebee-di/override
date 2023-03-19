@@ -81,7 +81,7 @@ Mapped address spaces:
     1 pattern found.
 
 This info is used in pyton script, which will be copied and run
----> scp -P 4242 ./level01/exploit.py level01@localhost:/tmp/ 
+---> scp -P 4242 ./level01/Resources/exploit.py level01@localhost:/tmp/ 
 ---> ( python /tmp/exploit.py; cat ) | ./level01
 ********* ADMIN LOGIN PROMPT *********
 Enter Username: verifying username....

