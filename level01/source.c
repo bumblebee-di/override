@@ -17,12 +17,16 @@ int main(void) {
     char buffer[16];
 
     bzero(buffer, 16);
+
+    int check;
+
     puts("********* ADMIN LOGIN PROMPT *********");
     printf("Enter Username: ");
 
     fgets(a_user_name, 256, stdin);
 
-    if (verify_user_name() != 0) {
+    check = verify_user_name();
+    if (check != 0) {
         puts("nope, incorrect username...\n");
         return 1;
     }
@@ -31,11 +35,13 @@ int main(void) {
 
     fgets(&buffer, 100, stdin);
 
-    if (verify_user_pass(buffer) == 0) {
-        return (0);
+    check = verify_user_pass(buffer);
+    if (check == 0) {
+        puts("nope, incorrect password...\n");
+        return 1;
     }
-
-    puts("nope, incorrect password...\n");
-
-    return(1);
+    if (check == 0) {
+        return 0;
+    }
+    return 0;
 }
