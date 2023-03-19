@@ -10,7 +10,7 @@ void decrypt(int pass) {
     }
 
     if (strncmp(str, "Congratulations!", 17) == 0)
-        puts("Congratulations!\n");
+        puts("Here is the system call occurs: system(\"/bin/sh\");\n");
         // system("/bin/sh");
     else
         puts("\nInvalid Password");
